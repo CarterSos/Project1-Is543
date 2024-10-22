@@ -104,7 +104,8 @@ struct QuizScreen: View {
 let vocabulary = [
     "Hello":"Adios",
     "english":"spanish",
-    "one":"uno"
+    "one":"uno",
+    "test":"please"
 ]
 
 struct FlashcardScreen: View {
