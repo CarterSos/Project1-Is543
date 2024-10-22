@@ -413,12 +413,12 @@ struct TopicLessonView: View {
             Text("\(topic.lessonText)")
 
             NavigationLink {
-                QuizScreen()
+                QuizScreen(topic: topic)
             } label: {
                 Text("Take the Quiz")
             }
             NavigationLink {
-                FlashcardScreen()
+                FlashcardScreen(topic: topic)
             } label: {
                 Text("Practice Flashcards")
             }
@@ -426,22 +426,46 @@ struct TopicLessonView: View {
 
     }
 }
-
+//            Form {
+//                Section {
+//                    Text("Question N goes here")
+//                }
+//                Section {
+//                    Text("a. Answer 1")
+//                    Text("b. Answer 2")
+//                    Text("c. Answer 3")
+//                    Text("d. Answer 4")
+//                }
+//            }
 struct QuizScreen: View {
+    let topic: Topic
+    @State private var selectedAnswer: String? = nil
+    
     var body: some View {
         VStack {
-            Form {
-                Section {
-                    Text("Question N goes here")
+            ForEach(topic.quizQuestions, id: \.self) { question in
+                VStack {
+                    Text("\(question.question)")
+                    if selectedAnswer == question.correctAnswer {
+                        Image(systemName: "checkmark")
+                            .foregroundColor(.green)
+                    }
                 }
-                Section {
-                    Text("a. Answer 1")
-                    Text("b. Answer 2")
-                    Text("c. Answer 3")
-                    Text("d. Answer 4")
+                ForEach(question.options, id: \.self) { option in
+                    Button(action: {
+                        selectedAnswer = option
+                    }) {
+                        HStack {
+                            Text(option)
+                            Spacer()
+                            
+                            
+                        }
+                    }
+//                    Text(option.wrappedValue)
                 }
-            }
 
+            }
         }
     }
 }
@@ -454,19 +478,23 @@ let vocabulary = [
 ]
 
 struct FlashcardScreen: View {
+    let topic: Topic
+    
     @State private var selectedTab = "" // ID is int and identifier is string
     
     // see website and inclass video
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            ForEach(vocabulary.keys.shuffled(), id: \.self) { key in
+            ForEach(topic.vocabulary.keys.shuffled(), id: \.self) { key in // vocabulary.keys.shuffled()
                 VStack {
                     Text("\(key)")
                         .font(.system(size: 60.0))
                         .padding()
-                    Text("\(selectedTab)")
+                    // see Concentration game for how to have english on other side and flip them
+                    Text("\(topic.vocabulary[key] ?? "")")
                         .font(.subheadline)
+                        .padding()
                 }
                 .background(Color(.systemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
