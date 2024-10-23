@@ -6,8 +6,17 @@
 //
 
 import Foundation
+import Combine
 
 class TopicViewModel: ObservableObject {
+    // MARK: - Properties
+//    @Published var topic: Topic
+//    
+//    init(topic: Topic) {
+//        self.topic = topic
+//    }
+//    var preferences = Preferences()
+    
     @Published var isShowingTranslation = false
     
     func flipFlashcard() {

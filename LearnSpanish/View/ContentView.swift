@@ -53,6 +53,8 @@ struct TopicLessonView: View {
                 }
                 .padding()
                 Button(action:{
+                    //viewModel.preferences.isQuizCompleted
+                    
                     topic.toggleIsQuizCompleted()
                 }) {
                     Text(topic.isQuizCompleted ? "Mark Quiz Incomplete" : "Mark Quiz Complete")
