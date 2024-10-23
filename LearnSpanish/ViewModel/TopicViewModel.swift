@@ -10,12 +10,14 @@ import Combine
 
 class TopicViewModel: ObservableObject {
     // MARK: - Properties
-//    @Published var topic: Topic
-//    
+//    @Published var topics: [Topic]
+//
 //    init(topic: Topic) {
 //        self.topic = topic
 //    }
-//    var preferences = Preferences()
+    
+    //var key = Key() // ??
+    var preferences = Preferences()
     
     @Published var isShowingTranslation = false
     
@@ -30,6 +32,17 @@ class TopicViewModel: ObservableObject {
 //    func checkFlashcards(topic: var Topic) {
 //        topic.isFlashcardsCompleted.toggle()
 //    }
+//    func saveTopicState(topic: Topic) {
+//        // This will be automatically handled by the didSet property observers in Topic
+//        // So, if you modify the properties, they will be saved automatically.
+//        
+//        // Example: to save state after modifying properties, you can call:
+//        if let index = topics.firstIndex(where: { $0.name == topic.name }) {
+//            topics[index].isLessonRead = topic.isLessonRead
+//            topics[index].isFlashcardsCompleted = topic.isFlashcardsCompleted
+//            topics[index].isQuizCompleted = topic.isQuizCompleted
+//        }
+//    }
     
     @Published var topics: [Topic] = [
         Topic(
@@ -39,7 +52,7 @@ class TopicViewModel: ObservableObject {
 
             As you move through this lesson, you will learn common expressions like \"¿Cómo estás?\" (How are you?), which is used to ask someone about their well-being, and simple responses like \"Estoy bien\" (I am fine). Mastering these phrases will give you the confidence to greet others, show politeness, and express yourself in Spanish with ease.
             """,
-            isLessonRead: false,
+//            isLessonRead: UserDefaults.standard.bool(forKey: Topic.Key.isLessonRead(for: "Basic Greetings and Farewells")),
             vocabulary: [
                 "Hola": "Hello",
                 "Adiós": "Goodbye",
@@ -51,7 +64,7 @@ class TopicViewModel: ObservableObject {
                 "Hasta luego": "See you later"
             ],
             shuffledVocabulary: [:],
-            isFlashcardsCompleted: false,
+//            isFlashcardsCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isFlashcardsCompleted(for: "Basic Greetings and Farewells")),
             currentFlashcardIndex: 0,
             quizQuestions: [
                 QuizQuestion(question: "What is the Spanish word for 'Goodbye'?", options: ["Adiós", "Hola", "Buenas noches"], correctAnswer: "Adiós"),
@@ -62,7 +75,7 @@ class TopicViewModel: ObservableObject {
             ],
             quizScore: 0,
             highScore: 0,
-            isQuizCompleted: false,
+//            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Basic Greetings and Farewells")),
             timeLeft: 20,
             bonusPoints: 10,
             quizProgress: 0
@@ -74,7 +87,7 @@ class TopicViewModel: ObservableObject {
 
             As you practice, pay special attention to questions such as \"¿Cuánto cuesta?\" (How much does it cost?) and \"¿Dónde está...?\" (Where is...?), which are vital for shopping or finding your way in a Spanish-speaking country. This lesson will give you the tools to communicate basic needs and responses, making interactions smoother.
             """,
-            isLessonRead: false,
+//            isLessonRead: UserDefaults.standard.bool(forKey: Topic.Key.isLessonRead(for: "Common Phrases")),
             vocabulary: [
                 "Por favor": "Please",
                 "Gracias": "Thank you",
@@ -85,7 +98,7 @@ class TopicViewModel: ObservableObject {
                 "Me gustaría": "I would like"
             ],
             shuffledVocabulary: [:],
-            isFlashcardsCompleted: false,
+//            isFlashcardsCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isFlashcardsCompleted(for: "Common Phrases")),
             currentFlashcardIndex: 0,
             quizQuestions: [
                 QuizQuestion(question: "How do you say 'Thank you' in Spanish?", options: ["Gracias", "Por favor", "De nada"], correctAnswer: "Gracias"),
@@ -96,7 +109,7 @@ class TopicViewModel: ObservableObject {
             ],
             quizScore: 0,
             highScore: 0,
-            isQuizCompleted: false,
+//            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Common Phrases")),
             timeLeft: 20,
             bonusPoints: 10,
             quizProgress: 0
@@ -108,7 +121,7 @@ class TopicViewModel: ObservableObject {
 
             As you go through the lesson, take note of how numbers are used in various contexts. Mastering these will help you build confidence as you expand into larger numbers and use them in more advanced conversations. Whether you’re ordering at a café or asking for directions, knowing how to express numbers is a key skill.
             """,
-            isLessonRead: false,
+//            isLessonRead: UserDefaults.standard.bool(forKey: Topic.Key.isLessonRead(for: "Numbers (1-10)")),
             vocabulary: [
                 "Uno": "1",
                 "Dos": "2",
@@ -122,7 +135,7 @@ class TopicViewModel: ObservableObject {
                 "Diez": "10"
             ],
             shuffledVocabulary: [:],
-            isFlashcardsCompleted: false,
+//            isFlashcardsCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isFlashcardsCompleted(for: "Numbers (1-10)")),
             currentFlashcardIndex: 0,
             quizQuestions: [
                 QuizQuestion(question: "What is the Spanish word for '1'?", options: ["Uno", "Dos", "Tres"], correctAnswer: "Uno"),
@@ -133,7 +146,7 @@ class TopicViewModel: ObservableObject {
             ],
             quizScore: 0,
             highScore: 0,
-            isQuizCompleted: false,
+//            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Numbers (1-10)")),
             timeLeft: 20,
             bonusPoints: 10,
             quizProgress: 0
@@ -145,7 +158,7 @@ class TopicViewModel: ObservableObject {
 
             By the end of the lesson, you’ll be able to talk about your favorite color or describe everyday items in detail. From clothing and food to the natural world, color vocabulary will enrich your conversations and deepen your ability to express yourself visually and creatively.
             """,
-            isLessonRead: false,
+//            isLessonRead: UserDefaults.standard.bool(forKey: Topic.Key.isLessonRead(for: "Colors")),
             vocabulary: [
                 "Rojo": "Red",
                 "Azul": "Blue",
@@ -157,7 +170,7 @@ class TopicViewModel: ObservableObject {
                 "Rosa": "Pink"
             ],
             shuffledVocabulary: [:],
-            isFlashcardsCompleted: false,
+//            isFlashcardsCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isFlashcardsCompleted(for: "Colors")),
             currentFlashcardIndex: 0,
             quizQuestions: [
                 QuizQuestion(question: "What is the Spanish word for 'Red'?", options: ["Rojo", "Azul", "Verde"], correctAnswer: "Rojo"),
@@ -168,7 +181,7 @@ class TopicViewModel: ObservableObject {
             ],
             quizScore: 0,
             highScore: 0,
-            isQuizCompleted: false,
+//            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Colors")),
             timeLeft: 20,
             bonusPoints: 10,
             quizProgress: 0
@@ -181,7 +194,7 @@ class TopicViewModel: ObservableObject {
 
             As you work through this lesson, you’ll become more comfortable discussing familial connections. Whether you’re introducing someone to your family or learning about someone else\'s, these terms will provide a foundation for deeper conversations.
             """,
-            isLessonRead: false,
+//            isLessonRead: UserDefaults.standard.bool(forKey: Topic.Key.isLessonRead(for: "Family Members")),
             vocabulary: [
                 "Madre": "Mother",
                 "Padre": "Father",
@@ -193,7 +206,7 @@ class TopicViewModel: ObservableObject {
                 "Tía": "Aunt"
             ],
             shuffledVocabulary: [:],
-            isFlashcardsCompleted: false,
+//            isFlashcardsCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isFlashcardsCompleted(for: "Family Members")),
             currentFlashcardIndex: 0,
             quizQuestions: [
                 QuizQuestion(question: "What is the Spanish word for 'Mother'?", options: ["Madre", "Padre", "Hermana"], correctAnswer: "Madre"),
@@ -204,7 +217,7 @@ class TopicViewModel: ObservableObject {
             ],
             quizScore: 0,
             highScore: 0,
-            isQuizCompleted: false,
+//            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Family Members")),
             timeLeft: 20,
             bonusPoints: 10,
             quizProgress: 0
@@ -218,7 +231,7 @@ class TopicViewModel: ObservableObject {
 
             By the end of this lesson, you’ll be able to express your likes and dislikes, ask for specific items at a restaurant, and engage in conversations about meals. Food is a common topic, and this vocabulary will make your conversations much richer and more enjoyable.
             """,
-            isLessonRead: false,
+//            isLessonRead: UserDefaults.standard.bool(forKey: Topic.Key.isLessonRead(for: "Food and Drink")),
             vocabulary: [
                 "Agua": "Water",
                 "Comida": "Food",
@@ -230,7 +243,7 @@ class TopicViewModel: ObservableObject {
                 "Té": "Tea"
             ],
             shuffledVocabulary: [:],
-            isFlashcardsCompleted: false,
+//            isFlashcardsCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isFlashcardsCompleted(for: "Food and Drink")),
             currentFlashcardIndex: 0,
             quizQuestions: [
                 QuizQuestion(question: "What is the Spanish word for 'Water'?", options: ["Agua", "Café", "Té"], correctAnswer: "Agua"),
@@ -241,7 +254,7 @@ class TopicViewModel: ObservableObject {
             ],
             quizScore: 0,
             highScore: 0,
-            isQuizCompleted: false,
+//            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Food and Drink")),
             timeLeft: 20,
             bonusPoints: 10,
             quizProgress: 0
@@ -255,7 +268,7 @@ class TopicViewModel: ObservableObject {
 
             As you progress, you'll see how adjectives change based on what you're describing, and how they can be used to express emotions, opinions, and attributes. These words will give you more flexibility in conversations, helping you communicate your thoughts and feelings more accurately.
             """,
-            isLessonRead: false,
+//            isLessonRead: UserDefaults.standard.bool(forKey: Topic.Key.isLessonRead(for: "Common Adjectives")),
             vocabulary: [
                 "Grande": "Big",
                 "Pequeño": "Small",
@@ -267,7 +280,7 @@ class TopicViewModel: ObservableObject {
                 "Aburrido": "Boring"
             ],
             shuffledVocabulary: [:],
-            isFlashcardsCompleted: false,
+//            isFlashcardsCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isFlashcardsCompleted(for: "Common Adjectives")),
             currentFlashcardIndex: 0,
             quizQuestions: [
                 QuizQuestion(question: "What is the Spanish word for 'Big'?", options: ["Grande", "Pequeño", "Bonito"], correctAnswer: "Grande"),
@@ -278,7 +291,7 @@ class TopicViewModel: ObservableObject {
             ],
             quizScore: 0,
             highScore: 0,
-            isQuizCompleted: false,
+//            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Common Adjectives")),
             timeLeft: 20,
             bonusPoints: 10,
             quizProgress: 0
@@ -292,7 +305,7 @@ class TopicViewModel: ObservableObject {
 
             Understanding how to use the days of the week will help you in both casual and formal conversations, from discussing work schedules to planning vacations. By the end of this lesson, you'll be able to refer to days confidently and keep track of time more easily in Spanish.
             """,
-            isLessonRead: false,
+//            isLessonRead: UserDefaults.standard.bool(forKey: Topic.Key.isLessonRead(for: "Days of the Week")),
             vocabulary: [
                 "Lunes": "Monday",
                 "Martes": "Tuesday",
@@ -303,7 +316,7 @@ class TopicViewModel: ObservableObject {
                 "Domingo": "Sunday"
             ],
             shuffledVocabulary: [:],
-            isFlashcardsCompleted: false,
+//            isFlashcardsCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isFlashcardsCompleted(for: "Days of the Week")),
             currentFlashcardIndex: 0,
             quizQuestions: [
                 QuizQuestion(question: "What is the Spanish word for 'Wednesday'?", options: ["Miércoles", "Martes", "Viernes"], correctAnswer: "Miércoles"),
@@ -314,7 +327,7 @@ class TopicViewModel: ObservableObject {
             ],
             quizScore: 0,
             highScore: 0,
-            isQuizCompleted: false,
+//            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Days of the Week")),
             timeLeft: 20,
             bonusPoints: 10,
             quizProgress: 0
@@ -328,7 +341,7 @@ class TopicViewModel: ObservableObject {
 
             By mastering these weather phrases, you'll be able to engage in small talk and understand weather reports. This knowledge will also help when traveling, as you'll be able to ask locals about the forecast or share your experiences of the climate.
             """,
-            isLessonRead: false,
+//            isLessonRead: UserDefaults.standard.bool(forKey: Topic.Key.isLessonRead(for: "Weather Vocabulary")),
             vocabulary: [
                 "Hace sol": "It's sunny",
                 "Hace frío": "It's cold",
@@ -338,7 +351,7 @@ class TopicViewModel: ObservableObject {
                 "Hace calor": "It's hot"
             ],
             shuffledVocabulary: [:],
-            isFlashcardsCompleted: false,
+//            isFlashcardsCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isFlashcardsCompleted(for: "Weather Vocabulary")),
             currentFlashcardIndex: 0,
             quizQuestions: [
                 QuizQuestion(question: "What is the Spanish word for 'It's sunny'?", options: ["Hace sol", "Hace frío", "Está nublado"], correctAnswer: "Hace sol"),
@@ -349,7 +362,7 @@ class TopicViewModel: ObservableObject {
             ],
             quizScore: 0,
             highScore: 0,
-            isQuizCompleted: false,
+//            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Weather Vocabulary")),
             timeLeft: 20,
             bonusPoints: 10,
             quizProgress: 0
@@ -363,7 +376,7 @@ class TopicViewModel: ObservableObject {
 
             Understanding these verbs and how they function in sentences will give you the foundation for more complex language skills. As you practice, focus on conjugating the verbs and using them in different contexts to describe actions, states, and possessions.
             """,
-            isLessonRead: false,
+//            isLessonRead: UserDefaults.standard.bool(forKey: Topic.Key.isLessonRead(for: "Common Verbs")),
             vocabulary: [
                 "Ser": "To be",
                 "Estar": "To be",
@@ -375,7 +388,7 @@ class TopicViewModel: ObservableObject {
                 "Hablar": "To speak"
             ],
             shuffledVocabulary: [:],
-            isFlashcardsCompleted: false,
+//            isFlashcardsCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isFlashcardsCompleted(for: "Common Verbs")),
             currentFlashcardIndex: 0,
             quizQuestions: [
                 QuizQuestion(question: "What is the Spanish word for 'To eat'?", options: ["Comer", "Beber", "Hablar"], correctAnswer: "Comer"),
@@ -386,7 +399,7 @@ class TopicViewModel: ObservableObject {
             ],
             quizScore: 0,
             highScore: 0,
-            isQuizCompleted: false,
+//            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Common Verbs")),
             timeLeft: 20,
             bonusPoints: 10,
             quizProgress: 0

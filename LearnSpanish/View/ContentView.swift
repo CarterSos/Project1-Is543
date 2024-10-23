@@ -28,7 +28,10 @@ struct TopicCell: View {
     var body: some View {
         HStack {
             NavigationLink {
-                TopicLessonView(topic: topic, viewModel: viewModel)
+                if let topicIndex = viewModel.topics.firstIndex(of: topic) {
+                    TopicLessonView(topic: $viewModel.topics[topicIndex], viewModel: viewModel) // topicIndex: topicIndex
+                }
+//                TopicLessonView(topic: topic, viewModel: viewModel)
             } label: {
                 Text(topic.name)
             }
@@ -38,12 +41,17 @@ struct TopicCell: View {
 }
 
 struct TopicLessonView: View {
-
-    @State var topic: Topic // needs to mutable so i can change the properties of this topic instance (like completion status for quiz, flashcards, and lesson
+//    let topicIndex: Int //start of new changes
+    @Binding var topic: Topic // needs to mutable so i can change the properties of this topic instance (like completion status for quiz, flashcards, and lesson
     @ObservedObject var viewModel: TopicViewModel
-
+//    @State private var isQuizCompleted: Bool
+//    @Binding var topic: Topic
+//    topic = viewModel.topics[topicIndex]
     var body: some View {
-
+//        var topic = viewModel.topics[topicIndex]
+        
+//        _  = { isQuizCompleted = topic.isQuizCompleted}()
+        
         VStack {
             HStack {
                 NavigationLink {
@@ -52,12 +60,35 @@ struct TopicLessonView: View {
                     Text("Take the Quiz")
                 }
                 .padding()
+                Toggle(
+                    "Quiz Completed",
+                    isOn:
+                        $topic.isQuizCompleted
+//                        $viewModel.topics[topicIndex].isQuizCompleted
+//                        Binding(
+//                        get: { viewModel.topics[topicIndex].isQuizCompleted },
+//                        set: { newValue in
+//                            viewModel.topics[topicIndex].isQuizCompleted = newValue
+//                        }
+//                    )
+                )
+                
+                .padding()
+//                Toggle(
+//                    "Quiz Completed",
+//                    isOn: $viewModel.preferences.isQuizCompleted //$viewModel.topics[0].isQuizCompleted
+//                )
                 Button(action:{
-                    //viewModel.preferences.isQuizCompleted
-                    
-                    topic.toggleIsQuizCompleted()
+//                    viewModel.topics[0].toggleIsQuizCompleted()
+                    topic.toggleIsQuizCompleted()//viewModel.topics[topicIndex].toggleIsQuizCompleted()
+//                    if viewModel.preferences.isQuizCompleted {
+//                        viewModel.preferences.isQuizCompleted = false
+//                    } else {
+//                        viewModel.preferences.isQuizCompleted = true
+//                    }
+////                    topic.toggleIsQuizCompleted()
                 }) {
-                    Text(topic.isQuizCompleted ? "Mark Quiz Incomplete" : "Mark Quiz Complete")
+                    Text(topic.isQuizCompleted ? "Mark Quiz Incomplete" : "Mark Quiz Complete")//viewModel.topics[topicIndex].isQuizCompleted //viewModel.topics[0].isQuizCompleted // topic.isQuizCompleted
                 }
                 .padding()
             }
@@ -163,20 +194,20 @@ struct FlashcardScreen: View {
                 .shadow(radius: 5)
                 .padding()
                 .rotation3DEffect(Angle(degrees: rotation),
-                                  axis: (0, 1, 0)
+                                  axis: (1, 1, 0) // 0,1,0
                 )
 //                .modifier(Cardify(isFaceUp: rotation.truncatingRemainder(dividingBy: 90) == 0))
-                .modifier(Cardify(isFaceUp: rotation <= 90))
+                .modifier(Cardify(isFaceUp: rotation >= 0)) // <= 90
 //                .modifier(Cardify(isFaceUp: rotation <= 90))
                 .onTapGesture {
                     withAnimation {
 //
-//                        rotation += 180
-                        if rotation == 180 { // prevents my words from facing backwards
-                            rotation = 0
-                        } else {
-                            rotation += 180
-                        }
+                        rotation += 360
+//                        if rotation == 180 { // prevents my words from facing backwards
+//                            rotation = 0
+//                        } else {
+//                            rotation += 180
+//                        }
                         viewModel.flipFlashcard()
                         
                     }
