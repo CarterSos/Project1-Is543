@@ -11,7 +11,10 @@
 
 
 import Foundation
-// with initializer
+// class with initializer
+// I had a rendering problem and spent 4 hours just trying to fix it
+// the thing that finally fixed it was changing my struct to a class
+// hopefully my model as a class is accceptable
 class Topic: ObservableObject, Hashable {
     let name: String
     let lessonText: String

@@ -10,6 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @StateObject var viewModel = TopicViewModel()
     
+    // display checks for lesson, quiz, and flashcards to show progress on home screen
+    
     var body: some View {
         NavigationStack {
             List(viewModel.topics, id: \.self) { topic in
@@ -29,7 +31,7 @@ struct TopicCell: View {
         HStack {
             NavigationLink {
                 if let topicIndex = viewModel.topics.firstIndex(of: topic) {
-                    TopicLessonView(topic: $viewModel.topics[topicIndex], viewModel: viewModel) // topicIndex: topicIndex
+                    TopicLessonView(topicIndex: topicIndex, topic: $viewModel.topics[topicIndex], viewModel: viewModel) // topicIndex: topicIndex
                 }
 //                TopicLessonView(topic: topic, viewModel: viewModel)
             } label: {
@@ -41,7 +43,13 @@ struct TopicCell: View {
 }
 
 struct TopicLessonView: View {
-//    let topicIndex: Int //start of new changes
+    // TO DO:
+    // also display all flashcards below lesson
+    // does it scroll?
+    // display quiz high score on this screen?
+    
+    
+    let topicIndex: Int //start of new changes
     @Binding var topic: Topic // needs to mutable so i can change the properties of this topic instance (like completion status for quiz, flashcards, and lesson
     @ObservedObject var viewModel: TopicViewModel
 //    @State private var isQuizCompleted: Bool
@@ -55,7 +63,7 @@ struct TopicLessonView: View {
         VStack {
             HStack {
                 NavigationLink {
-                    QuizScreen(topic: topic, viewModel: viewModel)
+                    QuizScreen(topicIndex: topicIndex, topic: topic, viewModel: viewModel)
                 } label: {
                     Text("Take the Quiz")
                 }
@@ -134,138 +142,265 @@ struct TopicLessonView: View {
 //                }
 //            }
 struct QuizScreen: View {
+    // need to have Q's on all flashcards
+    // score +10 for correct + bonus = (20 - elapsedTime) / 2 round up
+    // animate to show bonus time (see concentration app like pie)
+    // If correct: play sound and/or animation
+    // If incorrect: play sound or animate showing it was wrong
+    // User navigate to next question
+    // display running score
+    // if total > highscore then update highscore
+    
+    let topicIndex: Int
     let topic: Topic
     @ObservedObject var viewModel: TopicViewModel
     
     @State private var selectedAnswer: String? = nil
     
+    @State private var showResult = false
+    @State private var isCorrectAnswer = false
+    
+    
     var body: some View {
+        
         VStack {
-            ForEach(topic.quizQuestions, id: \.self) { question in
+            if viewModel.currentQuizIndex < topic.quizQuestions.count { //viewModel.topics[topicIndex].quizQuestions.count
                 VStack {
-                    Text("\(question.question)")
-                    if selectedAnswer == question.correctAnswer {
-                        Image(systemName: "checkmark")
-                            .foregroundColor(.green)
-                    }
-                }
-                ForEach(question.options, id: \.self) { option in
-                    Button(action: {
-                        selectedAnswer = option
-                    }) {
-                        HStack {
-                            Text(option)
-                            Spacer()
+                    
+                    
+                    Text("Score: \(viewModel.currentScore)")
+                        .font(.headline)
+                        .padding()
+                    // Time-based bonus indicator
+                    ProgressView(value: viewModel.quizElapsedTime, total: 20)
+                        .padding()
+                    
+                    Text(topic.quizQuestions[viewModel.currentQuizIndex].question)
+                        .font(.title2)
+                        .padding()
+                        .onAppear { // when question appears start timer
+                            viewModel.startQuizTimer()
+                            viewModel.numQuestions = topic.quizQuestions.count
+                            viewModel.currentTopicIndex = topicIndex
+                        }
+                    
+                    ForEach(topic.quizQuestions[viewModel.currentQuizIndex].options, id: \.self) { option in
+                        Button(action: {
+                            viewModel.stopQuizTimer()
+                            selectedAnswer = option
+                            if selectedAnswer == topic.quizQuestions[viewModel.currentQuizIndex].correctAnswer { // if correct
+                                //                        Image(systemName: "checkmark")
+                                //                            .foregroundColor(.green)
+                                isCorrectAnswer = true
+                                viewModel.correctAnswer()
+                                showResult = true
+                            } else {
+                                isCorrectAnswer = false
+                                viewModel.incorrectAnswer()
+                                showResult = true
+                            }
+                            //                    isCorrectAnswer = viewModel.checkQuizAnswer(option)
+                            //                    showResult = true
                             
+                        }) {
+                            Text(option)
+                                .foregroundColor(.white)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                                .padding(.horizontal)
+                        }
+                    }
+                    Spacer()
+                    
+                    
+                } // end VStack
+                .alert(isPresented: $showResult) {
+                    Alert(
+                        title: Text(isCorrectAnswer ? "Correct!" : "Incorrect"),
+                        message: Text(isCorrectAnswer ? "Well done!" : "The correct answer is \(topic.quizQuestions[viewModel.currentQuizIndex].correctAnswer)"),
+                        dismissButton: .default(Text("Next Question")) {
+                            viewModel.nextQuizQuestion()
+                            viewModel.startQuizTimer()
+                        }
+                    )
+                }
+                .navigationTitle("Quiz")
+                
+            } else {
+                VStack {
+                    Text("You have completed the quiz!")
+                        .font(.largeTitle)
+                        .padding()
+                    Text("Your Score: \(viewModel.currentScore)")
+                        .font(.title)
+                        .padding()
+                        .onAppear(){
+                            viewModel.updateHighScore()
+                        }
+                    if viewModel.currentScore > topic.highScore {
+                        Text("Congrats! You got a new high score of \(viewModel.currentScore)!!")
+                            .font(.headline)
+                            .foregroundColor(.green)
+                            .padding()
+                    }
+
+                    Button("Restart Quiz") {
+                        viewModel.resetQuiz()
+                    }
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.green)
+                    .cornerRadius(10)
+                    
+                    // Update progress
+                    //                Button(action: {
+                    //                    if !viewModel.topic.isQuizCompleted {
+                    //                        viewModel.topic.isQuizCompleted = true
+                    //                        progressViewModel.updateQuizCompletion(
+                    //                            for: viewModel.topic.id,
+                    //                            score: viewModel.currentScore
+                    //                        )
+                    //                    }
+                    //                }) {
+                    //                    Text("Complete Quiz")
+                    //                }
+                }
+            }
+        }
+    }
+}
+    
+    
+    struct FlashcardScreen: View {
+        let topic: Topic
+        @ObservedObject var viewModel: TopicViewModel
+        
+        @State private var selectedTab = "" // ID is int and identifier is string
+        @State private var shuffledVocabulary: [(key: String, value: String)] = []
+        // see website and inclass video
+        @State private var rotation: Double = 0
+        
+        var body: some View {
+            TabView(selection: $selectedTab) {
+                ForEach(shuffledVocabulary, id: \.key) { entry in // vocabulary.keys.shuffled()
+                    VStack {
+                        Text(
+                            (viewModel.isShowingTranslation ? entry.key : entry.value)
+                        )
+                        .font(.largeTitle)
+                        .foregroundColor(.black)
+                        .padding()
+                    }
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .shadow(radius: 5)
+                    .padding()
+                    .rotation3DEffect(Angle(degrees: rotation),
+                                      axis: (1, 1, 0) // 0,1,0
+                    )
+                    //                .modifier(Cardify(isFaceUp: rotation.truncatingRemainder(dividingBy: 90) == 0))
+                    .modifier(Cardify(isFaceUp: rotation >= 0)) // <= 90
+                    //                .modifier(Cardify(isFaceUp: rotation <= 90))
+                    .onTapGesture {
+                        withAnimation {
+                            //
+                            rotation += 360
+                            //                        if rotation == 180 { // prevents my words from facing backwards
+                            //                            rotation = 0
+                            //                        } else {
+                            //                            rotation += 180
+                            //                        }
+                            viewModel.flipFlashcard()
                             
                         }
                     }
-//                    Text(option.wrappedValue)
                 }
-
+                
             }
+            .onAppear {
+                shuffledVocabulary = topic.vocabulary.shuffled().map { ($0.key, $0.value) }
+                selectedTab = shuffledVocabulary.first?.key ?? ""
+            }
+            .onChange(of: selectedTab) {
+                viewModel.tabChanged() // Call the tabChanged function
+            }
+            .tabViewStyle(.page)
+            .indexViewStyle(.page(backgroundDisplayMode: .always))
         }
     }
-}
-
-
-struct FlashcardScreen: View {
-    let topic: Topic
-    @ObservedObject var viewModel: TopicViewModel
     
-    @State private var selectedTab = "" // ID is int and identifier is string
-    @State private var shuffledVocabulary: [(key: String, value: String)] = []
-    // see website and inclass video
-    @State private var rotation: Double = 0
-    
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            ForEach(shuffledVocabulary, id: \.key) { entry in // vocabulary.keys.shuffled()
-                VStack {
-                    Text(
-                        (viewModel.isShowingTranslation ? entry.key : entry.value)
-                    )
-                    .font(.largeTitle)
-                    .foregroundColor(.black)
-                    .padding()
-                }
-                .background(Color(.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .shadow(radius: 5)
-                .padding()
-                .rotation3DEffect(Angle(degrees: rotation),
-                                  axis: (1, 1, 0) // 0,1,0
-                )
-//                .modifier(Cardify(isFaceUp: rotation.truncatingRemainder(dividingBy: 90) == 0))
-                .modifier(Cardify(isFaceUp: rotation >= 0)) // <= 90
-//                .modifier(Cardify(isFaceUp: rotation <= 90))
-                .onTapGesture {
-                    withAnimation {
-//
-                        rotation += 360
-//                        if rotation == 180 { // prevents my words from facing backwards
-//                            rotation = 0
-//                        } else {
-//                            rotation += 180
-//                        }
-                        viewModel.flipFlashcard()
-                        
+    struct Cardify: Animatable, ViewModifier {
+        var isFaceUp: Bool {
+            rotation < 90
+        }
+        
+        var animatableData: Double {
+            get { rotation }
+            set { rotation = newValue }
+        }
+        
+        var rotation: Double
+        
+        init(isFaceUp: Bool) {
+            rotation = isFaceUp ? 0 : 180 //220 // 180
+        }
+        
+        func body(content: Content) -> some View {
+            GeometryReader { geometry in
+                ZStack {
+                    if isFaceUp {
+                        RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).fill(.white)
+                        //RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).stroke()
+                    } else {
+                        RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).fill(.white)
                     }
+                    
+                    content.opacity(isFaceUp ? 1 : 1) // this was used to keep one side blank but I just want to flip it
                 }
+                .rotation3DEffect(Angle(degrees: rotation), axis: (0, 1, 0)) // 0,1,0
             }
-            
         }
-        .onAppear {
-            shuffledVocabulary = topic.vocabulary.shuffled().map { ($0.key, $0.value) }
-            selectedTab = shuffledVocabulary.first?.key ?? ""
-        }
-        .onChange(of: selectedTab) {
-            viewModel.tabChanged() // Call the tabChanged function
-        }
-        .tabViewStyle(.page)
-        .indexViewStyle(.page(backgroundDisplayMode: .always))
-    }
-}
-
-struct Cardify: Animatable, ViewModifier {
-    var isFaceUp: Bool {
-        rotation < 90
-    }
-
-    var animatableData: Double {
-        get { rotation }
-        set { rotation = newValue }
-    }
-
-    var rotation: Double
-
-    init(isFaceUp: Bool) {
-        rotation = isFaceUp ? 0 : 180 //220 // 180
-    }
-
-    func body(content: Content) -> some View {
-        GeometryReader { geometry in
-            ZStack {
-                if isFaceUp {
-                    RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).fill(.white)
-                    //RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).stroke()
-                } else {
-                    RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).fill(.white)
-                }
-
-                content.opacity(isFaceUp ? 1 : 1) // this was used to keep one side blank but I just want to flip it
-            }
-            .rotation3DEffect(Angle(degrees: rotation), axis: (0, 1, 0)) // 0,1,0
+        
+        // MARK: - Drawing constants
+        
+        private func cornerRadius(for size: CGSize) -> Double {
+            min(size.width, size.height) * 0.08
         }
     }
-
-    // MARK: - Drawing constants
-
-    private func cornerRadius(for size: CGSize) -> Double {
-        min(size.width, size.height) * 0.08
+    
+    #Preview {
+        ContentView()
     }
-}
+    
+    
+    //            ForEach(topic.quizQuestions, id: \.self) { question in
+    //                VStack {
+    //                    Text("\(question.question)")
+    //                    if selectedAnswer == question.correctAnswer {
+    //                        Image(systemName: "checkmark")
+    //                            .foregroundColor(.green)
+    //                    }
+    //                }
+    //                .onAppear {
+    //                    viewModel.startQuizTimer()
+    //                }
+    //                ForEach(question.options, id: \.self) { option in
+    //                    Button(action: {
+    //                        viewModel.stopQuizTimer()
+    //                        selectedAnswer = option
+    //
+    //                    }) {
+    //                        HStack {
+    //                            Text(option)
+    //                            Spacer()
+    //
+    //
+    //                        }
+    //                    }
+    //                    Text(option.wrappedValue)
+    //                }
+    //
+    //            }
 
-#Preview {
-    ContentView()
-}

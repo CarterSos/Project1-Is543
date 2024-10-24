@@ -16,8 +16,9 @@ class TopicViewModel: ObservableObject {
 //        self.topic = topic
 //    }
     
-    //var key = Key() // ??
     var preferences = Preferences()
+    
+    private var soundPlayer = SoundPlayer()
     
     @Published var isShowingTranslation = false
     
@@ -28,6 +29,71 @@ class TopicViewModel: ObservableObject {
     func tabChanged() {
         isShowingTranslation = false
     }
+    
+    @Published var quizElapsedTime: Double = 0
+    private var quizTimer: Timer?
+    @Published var currentScore = 0
+    @Published var currentQuizIndex = 0
+    @Published var numQuestions = 0
+    
+    @Published var currentTopicIndex = 0
+    
+    func correctAnswer() {
+        currentScore += 10
+        let bonus = Int((20 - quizElapsedTime) / 2.0)
+        currentScore += max(0, bonus)
+        Task { // call await within a task
+            await soundPlayer.playSound(named: "Click.m4a")
+        }
+    }
+    
+    func incorrectAnswer() {
+        Task { // call await within a task
+            await soundPlayer.playSound(named: "bonk.m4a")
+        }
+    }
+    
+    func startQuizTimer() {
+        quizElapsedTime = 0
+        quizTimer?.invalidate()
+        quizTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats:true) { _ in
+            self.quizElapsedTime += 1
+        }
+    }
+
+    func stopQuizTimer() {
+        quizTimer?.invalidate()
+    }
+
+    func nextQuizQuestion() {
+        if currentQuizIndex <= numQuestions {
+            currentQuizIndex += 1
+        } else { // this else means the quiz is done
+            // need to check if all were correct before doing this
+            topics[currentTopicIndex].isQuizCompleted = true
+            
+        }
+        quizElapsedTime = 0
+    }
+    
+    func updateHighScore() {
+        // Update high score if needed
+        if currentScore > topics[currentTopicIndex].highScore {
+            topics[currentTopicIndex].highScore = currentScore
+            // Save progress
+        }
+    }
+
+    func resetQuiz() {
+        currentQuizIndex = 0
+        currentScore = 0
+        quizElapsedTime = 0
+//        topic.isQuizCompleted = false
+//        shuffleQuizQuestions()
+    }
+    
+    
+    
     
 //    func checkFlashcards(topic: var Topic) {
 //        topic.isFlashcardsCompleted.toggle()
