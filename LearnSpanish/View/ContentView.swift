@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject var viewModel = TopicViewModel()
     
-    // display checks for lesson, quiz, and flashcards to show progress on home screen
+    // display check marks for lesson, quiz, and flashcards to show progress on home screen
     
     var body: some View {
         NavigationStack {
@@ -93,10 +93,6 @@ struct TopicCell: View {
 
 
 struct TopicLessonView: View {
-    // TO DO:
-    // also display all flashcards below lesson
-    // does it scroll?
-    // display quiz high score on this screen?
     
     let topicIndex: Int
     @Binding var topic: Topic // needs to mutable so i can change the properties of this topic instance (like completion status for quiz, flashcards, and lesson
@@ -294,6 +290,8 @@ struct QuizScreen: View {
     @State private var showResult = false
     @State private var isCorrectAnswer = false
     
+    @State private var rotation: Double = 0
+    
     
     var body: some View {
         
@@ -364,7 +362,7 @@ struct QuizScreen: View {
                 
             } else {
                 VStack {
-                    Text("You have completed the quiz!")
+                    Text("You Finished the Quiz!")
                         .font(.largeTitle)
                         .padding()
                     Text("Your Score: \(viewModel.currentScore)")
@@ -383,12 +381,22 @@ struct QuizScreen: View {
                         VStack {
                             Text("😎😎😎")
                                 .font(.largeTitle)
-                        }.rotation3DEffect(Angle(degrees: 1080),axis: (0, 0, 1))
+                        }
+                            .rotation3DEffect(Angle(degrees: 1080),axis: (0, 0, 1))
+//                            .modifier(Cardify(isFaceUp: true))
+                            .onAppear {
+                                withAnimation {
+                                    rotation += 360
+                                }
+                            }
+                        
                         
                     } else {
                         VStack {
                             Text("😎")
                                 .font(.largeTitle)
+                            Text("Get all quiz questions correct to complete the quiz!")
+                                .font(.headline)
                         }.rotation3DEffect(Angle(degrees: 360),axis: (0, 0, 1))
                     }
 
@@ -400,18 +408,6 @@ struct QuizScreen: View {
                     .background(Color.green)
                     .cornerRadius(10)
                     
-                    // Update progress
-                    //                Button(action: {
-                    //                    if !viewModel.topic.isQuizCompleted {
-                    //                        viewModel.topic.isQuizCompleted = true
-                    //                        progressViewModel.updateQuizCompletion(
-                    //                            for: viewModel.topic.id,
-                    //                            score: viewModel.currentScore
-                    //                        )
-                    //                    }
-                    //                }) {
-                    //                    Text("Complete Quiz")
-                    //                }
                 }
             }
         }

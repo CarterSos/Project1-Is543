@@ -10,11 +10,6 @@ import Combine
 
 class TopicViewModel: ObservableObject {
     // MARK: - Properties
-//    @Published var topics: [Topic]
-//
-//    init(topic: Topic) {
-//        self.topic = topic
-//    }
     
     var preferences = Preferences()
     
@@ -115,26 +110,9 @@ class TopicViewModel: ObservableObject {
         currentScore = 0
         quizElapsedTime = 0
 //        topic.isQuizCompleted = false
-//        shuffleQuizQuestions()
     }
     
-    
-    
-    
-//    func checkFlashcards(topic: var Topic) {
-//        topic.isFlashcardsCompleted.toggle()
-//    }
-//    func saveTopicState(topic: Topic) {
-//        // This will be automatically handled by the didSet property observers in Topic
-//        // So, if you modify the properties, they will be saved automatically.
-//        
-//        // Example: to save state after modifying properties, you can call:
-//        if let index = topics.firstIndex(where: { $0.name == topic.name }) {
-//            topics[index].isLessonRead = topic.isLessonRead
-//            topics[index].isFlashcardsCompleted = topic.isFlashcardsCompleted
-//            topics[index].isQuizCompleted = topic.isQuizCompleted
-//        }
-//    }
+
     
     @Published var topics: [Topic] = [
         Topic(
