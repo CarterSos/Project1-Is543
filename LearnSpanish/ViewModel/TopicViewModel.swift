@@ -43,15 +43,24 @@ class TopicViewModel: ObservableObject {
         let bonus = Int((20 - quizElapsedTime) / 2.0)
         currentScore += max(0, bonus)
         Task { // call await within a task
-            await soundPlayer.playSound(named: "Click.m4a")
+            await soundPlayer.playSound(named: "YES.m4a")
         }
     }
     
+//    func incorrectAnswer() {
+//        Task { // call await within a task
+//            await soundPlayer.playSound(named: "bonk.m4a")
+//            await soundPlayer.playSound(named: "starKO.m4a")
+//        }
+//    }
     func incorrectAnswer() {
-        Task { // call await within a task
+        Task {
             await soundPlayer.playSound(named: "bonk.m4a")
+            try? await Task.sleep(nanoseconds: 500_000_000)  // 2-second delay (adjust as needed)
+            await soundPlayer.playSound(named: "starKO.m4a")
         }
     }
+
     
     func startQuizTimer() {
         quizElapsedTime = 0
@@ -80,7 +89,17 @@ class TopicViewModel: ObservableObject {
         // Update high score if needed
         if currentScore > topics[currentTopicIndex].highScore {
             topics[currentTopicIndex].highScore = currentScore
-            // Save progress
+            Task { // call await within a task
+                await soundPlayer.playSound(named: "mariowin.m4a")
+                try? await Task.sleep(nanoseconds: 5_000_000_000)
+                await soundPlayer.playSound(named: "falcon.m4a")
+                try? await Task.sleep(nanoseconds: 750_000_000)
+                await soundPlayer.playSound(named: "punch.m4a")
+            }
+        } else {
+            Task { // call await within a task
+                await soundPlayer.playSound(named: "correct.m4a")
+            }
         }
     }
 

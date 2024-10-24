@@ -67,6 +67,10 @@ struct TopicLessonView: View {
                 } label: {
                     Text("Take the Quiz")
                 }
+                .foregroundColor(.white)  // Text color
+                .padding()
+                .background(Color.blue)    // Button background color
+                .cornerRadius(10)
                 .padding()
                 Toggle(
                     "Quiz Completed",
@@ -97,50 +101,135 @@ struct TopicLessonView: View {
 ////                    topic.toggleIsQuizCompleted()
                 }) {
                     Text(topic.isQuizCompleted ? "Mark Quiz Incomplete" : "Mark Quiz Complete")//viewModel.topics[topicIndex].isQuizCompleted //viewModel.topics[0].isQuizCompleted // topic.isQuizCompleted
+                        .foregroundColor(.white)  // Text color
+                        .padding()
+                        .frame(maxWidth: .infinity)  // Makes button fill available space horizontally
+                        .background(topic.isQuizCompleted ? Color.green : Color.red) // Conditional background color
+                        .cornerRadius(10)
                 }
                 .padding()
             }
             .padding()
             HStack {
+                // NavigationLink Button for Flashcards
                 NavigationLink {
                     FlashcardScreen(topic: topic, viewModel: viewModel)
                 } label: {
                     Text("Practice Flashcards")
+                        .foregroundColor(.white)  // Text color
+                        .padding()
+                        .background(Color.blue)    // Button background color
+                        .cornerRadius(10)          // Rounded corners
                 }
                 .padding()
+                
+                Toggle(
+                    "Flashcards Completed",
+                    isOn:
+                        $viewModel.topics[topicIndex].isFlashcardsCompleted
+                        // should be the same$topic.isFlashcardsCompleted
+//                        $viewModel.topics[topicIndex].isQuizCompleted
+//                        Binding(
+//                        get: { viewModel.topics[topicIndex].isQuizCompleted },
+//                        set: { newValue in
+//                            viewModel.topics[topicIndex].isQuizCompleted = newValue
+//                        }
+//                    )
+                )
+                
+                .padding()
+
+                // Button to Mark Flashcards as Complete/Incomplete
                 Button(action:{
-                    topic.toggleIsFlashcardsCompleted()
+                    viewModel.topics[topicIndex].toggleIsFlashcardsCompleted()
+                    //topic.isFlashcardsCompleted.toggle()
+//                    topic.toggleIsFlashcardsCompleted()
                 }) {
                     Text(topic.isFlashcardsCompleted ? "Mark Flashcards Incomplete" : "Mark Flashcards Complete")
+                        .foregroundColor(.white)  // Text color
+                        .padding()
+                        .frame(maxWidth: .infinity)  // Makes button fill available space horizontally
+                        .background(topic.isFlashcardsCompleted ? Color.green : Color.red) // Conditional background color
+                        .cornerRadius(10)          // Rounded corners
                 }
                 .padding()
             }
             .padding()
+
+            Toggle(
+                "Lesson Completed",
+                isOn:
+                    $topic.isLessonRead
+//                        $viewModel.topics[topicIndex].isQuizCompleted
+//                        Binding(
+//                        get: { viewModel.topics[topicIndex].isQuizCompleted },
+//                        set: { newValue in
+//                            viewModel.topics[topicIndex].isQuizCompleted = newValue
+//                        }
+//                    )
+            )
             Button(action:{
-                topic.toggleIsLessonRead()
+                //topic.toggleIsLessonRead()
+                viewModel.topics[topicIndex].isLessonRead.toggle()
             }) {
                 Text(topic.isLessonRead ? "Mark Lesson Unread" : "Mark Lesson Read")
             }
-            .padding()
+                .foregroundColor(.white)  // Text color
+                .padding()
+                .frame(maxWidth: .infinity)  // Makes button fill available space horizontally
+                .background(topic.isLessonRead ? Color.green : Color.red) // Conditional background color
+                .cornerRadius(10)
+                .padding()
             Text("Lesson for Topic: \(topic.name)")
                 .font(.headline)
             Text("\(topic.lessonText)")
                 .padding()
         }
+        
+//        ForEach(Array(topic.vocabulary), id: \.key) { vocab in // viewModel.topics[topicIndex].
+//            Text(vocab.key)
+//                .font(.subheadline)
+//                .padding()
+//        }
+        VocabularyGridView(vocabulary: topic.vocabulary)
 
     }
 }
-//            Form {
-//                Section {
-//                    Text("Question N goes here")
-//                }
-//                Section {
-//                    Text("a. Answer 1")
-//                    Text("b. Answer 2")
-//                    Text("c. Answer 3")
-//                    Text("d. Answer 4")
-//                }
-//            }
+
+
+struct VocabularyGridView: View {
+    let vocabulary: [String: String] // Assuming you have a vocabulary dictionary
+
+    // Define grid items
+    let columns = [
+        GridItem(.adaptive(minimum: 100)) // Adjust the minimum size for the cards
+    ]
+
+    var body: some View {
+        LazyVGrid(columns: columns, spacing: 20) {
+            ForEach(Array(vocabulary), id: \.key) { vocab in
+                VStack {
+                    Text(vocab.key)
+                        .font(.headline)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue.opacity(0.2)) // Card background color
+                        .cornerRadius(10) // Rounded corners
+                        .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2) // Optional shadow
+                    // Optionally display the definition or additional info
+                    Text(vocab.value)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .padding(.bottom)
+                }
+                .padding(.horizontal) // Padding around the card
+            }
+        }
+        .padding() // Padding around the grid
+    }
+}
+
+
 struct QuizScreen: View {
     // need to have Q's on all flashcards
     // score +10 for correct + bonus = (20 - elapsedTime) / 2 round up
@@ -239,11 +328,22 @@ struct QuizScreen: View {
                         .onAppear(){
                             viewModel.updateHighScore()
                         }
-                    if viewModel.currentScore > topic.highScore {
+                    if viewModel.currentScore >= topic.highScore {
                         Text("Congrats! You got a new high score of \(viewModel.currentScore)!!")
                             .font(.headline)
                             .foregroundColor(.green)
                             .padding()
+                            //.onAppear()
+                        VStack {
+                            Text("😎😎😎")
+                                .font(.largeTitle)
+                        }.rotation3DEffect(Angle(degrees: 1080),axis: (0, 0, 1))
+                        
+                    } else {
+                        VStack {
+                            Text("😎")
+                                .font(.largeTitle)
+                        }.rotation3DEffect(Angle(degrees: 360),axis: (0, 0, 1))
                     }
 
                     Button("Restart Quiz") {
