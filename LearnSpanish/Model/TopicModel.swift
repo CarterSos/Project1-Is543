@@ -152,7 +152,7 @@ struct QuizQuestion: Hashable {
     let correctAnswer: String
 }
 
-extension Topic {
+extension Topic { // I didn't end up using these but I kept the extension to remember what an extension is for the midterm
     func toggleIsLessonRead() {
         isLessonRead.toggle()
     }

@@ -35,10 +35,12 @@ class TopicViewModel: ObservableObject {
     @Published var currentScore = 0
     @Published var currentQuizIndex = 0
     @Published var numQuestions = 0
+    @Published var numCorrect = 0
     
     @Published var currentTopicIndex = 0
     
     func correctAnswer() {
+        numCorrect += 1
         currentScore += 10
         let bonus = Int((20 - quizElapsedTime) / 2.0)
         currentScore += max(0, bonus)
@@ -77,12 +79,14 @@ class TopicViewModel: ObservableObject {
     func nextQuizQuestion() {
         if currentQuizIndex <= numQuestions {
             currentQuizIndex += 1
-        } else { // this else means the quiz is done
-            // need to check if all were correct before doing this
-            topics[currentTopicIndex].isQuizCompleted = true
-            
         }
         quizElapsedTime = 0
+    }
+    
+    func checkWin() {
+        if numCorrect == numQuestions {
+            topics[currentTopicIndex].isQuizCompleted = true
+        }
     }
     
     func updateHighScore() {
@@ -104,6 +108,9 @@ class TopicViewModel: ObservableObject {
     }
 
     func resetQuiz() {
+        // TO DO:
+        // ADD MORE VARIABLES TO RESET
+        numCorrect = 0
         currentQuizIndex = 0
         currentScore = 0
         quizElapsedTime = 0

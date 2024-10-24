@@ -14,6 +14,10 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack {
+            Text("Quiz, Flashcards, Lesson")
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .font(.caption)
+                .padding()
             List(viewModel.topics, id: \.self) { topic in
                 TopicCell(topic: topic, viewModel: viewModel)
             }
@@ -22,7 +26,6 @@ struct ContentView: View {
         }
     }
 }
-
 struct TopicCell: View {
     let topic: Topic
     @ObservedObject var viewModel: TopicViewModel
@@ -31,16 +34,148 @@ struct TopicCell: View {
         HStack {
             NavigationLink {
                 if let topicIndex = viewModel.topics.firstIndex(of: topic) {
-                    TopicLessonView(topicIndex: topicIndex, topic: $viewModel.topics[topicIndex], viewModel: viewModel) // topicIndex: topicIndex
+                    TopicLessonView(topicIndex: topicIndex, topic: $viewModel.topics[topicIndex], viewModel: viewModel)
                 }
-//                TopicLessonView(topic: topic, viewModel: viewModel)
             } label: {
                 Text(topic.name)
+//                    .foregroundColor(.blue)
             }
+            HStack {
+                HStack {
+                    // Quiz Completion Indicator
+                    Image(systemName: topic.isQuizCompleted ? "checkmark.circle.fill" : "xmark.circle")
+//                        .resizable()
+//                        .scaledToFit()
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(topic.isQuizCompleted ? .green : .red)
 
+                    Text("Q")
+                        .font(.caption)
+                        .foregroundColor(.primary)
+                }
+
+                HStack {
+                    // Flashcards Completion Indicator
+                    Image(systemName: topic.isFlashcardsCompleted ? "checkmark.circle.fill" : "xmark.circle")
+//                        .resizable()
+//                        .scaledToFit()
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(topic.isFlashcardsCompleted ? .green : .red)
+
+                    Text("F")
+                        .font(.caption)
+                        .foregroundColor(.primary)
+                }
+
+                HStack {
+                    // Lesson Read Completion Indicator
+                    Image(systemName: topic.isLessonRead ? "checkmark.circle.fill" : "xmark.circle")
+//                        .resizable()
+//                        .scaledToFit()
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(topic.isLessonRead ? .green : .red)
+
+                    Text("L")
+                        .font(.caption)
+                        .foregroundColor(.primary)
+                }
+            }
+            .padding(.trailing, 8) // Add some spacing between the indicators and the topic name
+
+            
         }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(10)
+//        .shadow(radius: 2)
     }
 }
+
+//
+//struct TopicCell: View {
+//    let topic: Topic
+//    @ObservedObject var viewModel: TopicViewModel
+//
+//    var body: some View {
+//        HStack {
+//            // Completion Status Indicators
+//            VStack {
+//                HStack {
+//                    // Quiz Completion Indicator
+//                    Image(systemName: topic.isQuizCompleted ? "checkmark.circle.fill" : "xmark.circle")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 20, height: 20)
+//                        .foregroundColor(topic.isQuizCompleted ? .green : .red)
+//
+//                    Text("Quiz")
+//                        .font(.caption)
+//                        .foregroundColor(.primary)
+//                }
+//
+//                HStack {
+//                    // Flashcards Completion Indicator
+//                    Image(systemName: topic.isFlashcardsCompleted ? "checkmark.circle.fill" : "xmark.circle")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 20, height: 20)
+//                        .foregroundColor(topic.isFlashcardsCompleted ? .green : .red)
+//
+//                    Text("Flashcards")
+//                        .font(.caption)
+//                        .foregroundColor(.primary)
+//                }
+//
+//                HStack {
+//                    // Lesson Read Completion Indicator
+//                    Image(systemName: topic.isLessonRead ? "checkmark.circle.fill" : "xmark.circle")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 20, height: 20)
+//                        .foregroundColor(topic.isLessonRead ? .green : .red)
+//
+//                    Text("Lesson")
+//                        .font(.caption)
+//                        .foregroundColor(.primary)
+//                }
+//            }
+//            .padding(.trailing, 8) // Add some spacing between the indicators and the topic name
+//
+//            NavigationLink {
+//                if let topicIndex = viewModel.topics.firstIndex(of: topic) {
+//                    TopicLessonView(topicIndex: topicIndex, topic: $viewModel.topics[topicIndex], viewModel: viewModel)
+//                }
+//            } label: {
+//                Text(topic.name)
+//                    .foregroundColor(.blue)
+//            }
+//        }
+//        .padding()
+//        .background(Color.white)
+//        .cornerRadius(10)
+//        .shadow(radius: 2)
+//    }
+//}
+
+
+//struct TopicCell: View {
+//    let topic: Topic
+//    @ObservedObject var viewModel: TopicViewModel
+//
+//    var body: some View {
+//        HStack {
+//            NavigationLink {
+//                if let topicIndex = viewModel.topics.firstIndex(of: topic) {
+//                    TopicLessonView(topicIndex: topicIndex, topic: $viewModel.topics[topicIndex], viewModel: viewModel) // topicIndex: topicIndex
+//                }
+////                TopicLessonView(topic: topic, viewModel: viewModel)
+//            } label: {
+//                Text(topic.name)
+//            }
+//
+//        }
+//    }
+//}
 
 struct TopicLessonView: View {
     // TO DO:
@@ -48,161 +183,209 @@ struct TopicLessonView: View {
     // does it scroll?
     // display quiz high score on this screen?
     
-    
-    let topicIndex: Int //start of new changes
+    let topicIndex: Int
     @Binding var topic: Topic // needs to mutable so i can change the properties of this topic instance (like completion status for quiz, flashcards, and lesson
     @ObservedObject var viewModel: TopicViewModel
-//    @State private var isQuizCompleted: Bool
-//    @Binding var topic: Topic
-//    topic = viewModel.topics[topicIndex]
+
     var body: some View {
-//        var topic = viewModel.topics[topicIndex]
-        
-//        _  = { isQuizCompleted = topic.isQuizCompleted}()
-        
+
         VStack {
+            // This is the HStack for the check boxes on top
             HStack {
+                // Quiz Completion
+                VStack {
+                    Image(systemName: topic.isQuizCompleted ? "checkmark.circle.fill" : "xmark.circle")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(topic.isQuizCompleted ? .green : .red)
+                    Text("Quiz")
+                        .font(.caption)
+                    Text("Complete")
+                        .font(.caption)
+                    Toggle(isOn: $topic.isQuizCompleted) {
+                        EmptyView()
+                    }
+                    .frame(width: 50)
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(topic.isQuizCompleted ? Color.green : Color.red, lineWidth: 2)
+                )
+                .frame(maxWidth: .infinity, alignment: .center)
+                
+                
+                // Flashcards Completion
+                VStack {
+                    Image(systemName: topic.isFlashcardsCompleted ? "checkmark.circle.fill" : "xmark.circle")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(topic.isFlashcardsCompleted ? .green : .red)
+                    Text("Flashcards")
+                        .font(.caption)
+                    Text("Complete")
+                        .font(.caption)
+                    Toggle(isOn: $topic.isFlashcardsCompleted) {
+                        EmptyView() // Use an empty view to hide the default label
+                    }
+                    .frame(width:50)
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(topic.isFlashcardsCompleted ? Color.green : Color.red, lineWidth: 2)
+                )
+                .frame(maxWidth: .infinity, alignment: .center)
+                
+
+                
+                // Lesson Read Completion
+                VStack {
+                    Image(systemName: topic.isLessonRead ? "checkmark.circle.fill" : "xmark.circle")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(topic.isLessonRead ? .green : .red)
+                    Text("Lesson")
+                        .font(.caption)
+                    Text("Complete")
+                        .font(.caption)
+                    Toggle(isOn: $topic.isLessonRead) {
+                        EmptyView() // Use an empty view to hide the default label
+                    }
+                    .frame(width: 50)
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(topic.isLessonRead ? Color.green : Color.red, lineWidth: 2)
+                )
+                .frame(maxWidth: .infinity, alignment: .center)
+                
+            }
+            .padding()
+            
+            
+            
+//            VStack {
+//                VStack {
+//                        Text("Quiz Completed")
+//                            .font(.headline) // Optional: Customize the font as needed
+//                        Toggle(isOn: $topic.isQuizCompleted) {
+//                            EmptyView() // Use an empty view to hide the default label
+//                        }
+//                    }
+//                    .padding()
+////                Toggle(
+////                    "Quiz Completed",
+////                    isOn:
+////                        $topic.isQuizCompleted
+////                )
+////                .padding()
+//                VStack {
+//                        Text("Flashcards Completed")
+//                            .font(.headline) // Optional: Customize the font as needed
+//                        Toggle(isOn: $viewModel.topics[topicIndex].isFlashcardsCompleted) {
+//                            EmptyView() // Use an empty view to hide the default label
+//                        }
+//                    }
+//                    .padding()
+////                Toggle(
+////                    "Flashcards Completed",
+////                    isOn:
+////                        $viewModel.topics[topicIndex].isFlashcardsCompleted
+////                )
+//                
+////                .padding()
+//                VStack {
+//                        Text("Lesson Completed")
+//                            .font(.headline) // Optional: Customize the font as needed
+//                        Toggle(isOn: $topic.isLessonRead) {
+//                            EmptyView() // Use an empty view to hide the default label
+//                        }
+//                    }
+//                    .padding()
+////                Toggle(
+////                    "Lesson Completed",
+////                    isOn:
+////                        $topic.isLessonRead
+////                )
+////                .padding()
+//            }
+//            .padding()
+            HStack {
+ 
+                NavigationLink {
+                    FlashcardScreen(topic: topic, viewModel: viewModel)
+                } label: {
+                    Text("Practice Flashcards")
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                }
+                .padding()
                 NavigationLink {
                     QuizScreen(topicIndex: topicIndex, topic: topic, viewModel: viewModel)
                 } label: {
                     Text("Take the Quiz")
                 }
-                .foregroundColor(.white)  // Text color
+                .foregroundColor(.white)
                 .padding()
-                .background(Color.blue)    // Button background color
+                .background(Color.blue)
                 .cornerRadius(10)
                 .padding()
-                Toggle(
-                    "Quiz Completed",
-                    isOn:
-                        $topic.isQuizCompleted
-//                        $viewModel.topics[topicIndex].isQuizCompleted
-//                        Binding(
-//                        get: { viewModel.topics[topicIndex].isQuizCompleted },
-//                        set: { newValue in
-//                            viewModel.topics[topicIndex].isQuizCompleted = newValue
-//                        }
-//                    )
-                )
-                
-                .padding()
-//                Toggle(
-//                    "Quiz Completed",
-//                    isOn: $viewModel.preferences.isQuizCompleted //$viewModel.topics[0].isQuizCompleted
-//                )
-                Button(action:{
-//                    viewModel.topics[0].toggleIsQuizCompleted()
-                    topic.toggleIsQuizCompleted()//viewModel.topics[topicIndex].toggleIsQuizCompleted()
-//                    if viewModel.preferences.isQuizCompleted {
-//                        viewModel.preferences.isQuizCompleted = false
-//                    } else {
-//                        viewModel.preferences.isQuizCompleted = true
-//                    }
-////                    topic.toggleIsQuizCompleted()
-                }) {
-                    Text(topic.isQuizCompleted ? "Mark Quiz Incomplete" : "Mark Quiz Complete")//viewModel.topics[topicIndex].isQuizCompleted //viewModel.topics[0].isQuizCompleted // topic.isQuizCompleted
-                        .foregroundColor(.white)  // Text color
-                        .padding()
-                        .frame(maxWidth: .infinity)  // Makes button fill available space horizontally
-                        .background(topic.isQuizCompleted ? Color.green : Color.red) // Conditional background color
-                        .cornerRadius(10)
-                }
-                .padding()
-            }
-            .padding()
-            HStack {
-                // NavigationLink Button for Flashcards
-                NavigationLink {
-                    FlashcardScreen(topic: topic, viewModel: viewModel)
-                } label: {
-                    Text("Practice Flashcards")
-                        .foregroundColor(.white)  // Text color
-                        .padding()
-                        .background(Color.blue)    // Button background color
-                        .cornerRadius(10)          // Rounded corners
-                }
-                .padding()
-                
-                Toggle(
-                    "Flashcards Completed",
-                    isOn:
-                        $viewModel.topics[topicIndex].isFlashcardsCompleted
-                        // should be the same$topic.isFlashcardsCompleted
-//                        $viewModel.topics[topicIndex].isQuizCompleted
-//                        Binding(
-//                        get: { viewModel.topics[topicIndex].isQuizCompleted },
-//                        set: { newValue in
-//                            viewModel.topics[topicIndex].isQuizCompleted = newValue
-//                        }
-//                    )
-                )
-                
-                .padding()
 
-                // Button to Mark Flashcards as Complete/Incomplete
-                Button(action:{
-                    viewModel.topics[topicIndex].toggleIsFlashcardsCompleted()
-                    //topic.isFlashcardsCompleted.toggle()
-//                    topic.toggleIsFlashcardsCompleted()
-                }) {
-                    Text(topic.isFlashcardsCompleted ? "Mark Flashcards Incomplete" : "Mark Flashcards Complete")
-                        .foregroundColor(.white)  // Text color
-                        .padding()
-                        .frame(maxWidth: .infinity)  // Makes button fill available space horizontally
-                        .background(topic.isFlashcardsCompleted ? Color.green : Color.red) // Conditional background color
-                        .cornerRadius(10)          // Rounded corners
-                }
-                .padding()
             }
             .padding()
 
-            Toggle(
-                "Lesson Completed",
-                isOn:
-                    $topic.isLessonRead
-//                        $viewModel.topics[topicIndex].isQuizCompleted
-//                        Binding(
-//                        get: { viewModel.topics[topicIndex].isQuizCompleted },
-//                        set: { newValue in
-//                            viewModel.topics[topicIndex].isQuizCompleted = newValue
-//                        }
-//                    )
-            )
-            Button(action:{
-                //topic.toggleIsLessonRead()
-                viewModel.topics[topicIndex].isLessonRead.toggle()
-            }) {
-                Text(topic.isLessonRead ? "Mark Lesson Unread" : "Mark Lesson Read")
-            }
-                .foregroundColor(.white)  // Text color
-                .padding()
-                .frame(maxWidth: .infinity)  // Makes button fill available space horizontally
-                .background(topic.isLessonRead ? Color.green : Color.red) // Conditional background color
-                .cornerRadius(10)
-                .padding()
+            
+
             Text("Lesson for Topic: \(topic.name)")
                 .font(.headline)
-            Text("\(topic.lessonText)")
                 .padding()
-        }
-        
-//        ForEach(Array(topic.vocabulary), id: \.key) { vocab in // viewModel.topics[topicIndex].
-//            Text(vocab.key)
-//                .font(.subheadline)
-//                .padding()
-//        }
-        VocabularyGridView(vocabulary: topic.vocabulary)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Scroll for more information and vocab.")
+                        .font(.subheadline)
+                        .foregroundColor(.green)
+                    Text(topic.lessonText)
+                        .padding()
 
+                    VocabularyGridView(vocabulary: topic.vocabulary)
+                }
+                .padding()
+            }
+        }
     }
 }
 
+//struct VocabularyGridView: View {
+//    let vocabulary: [String: String] // Assuming vocabulary is a dictionary
+//
+//    var body: some View {
+//        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2)) { // 2 columns
+//            ForEach(vocabulary.sorted(by: { $0.key < $1.key }), id: \.key) { vocab in
+//                Text(vocab.key)
+//                    .font(.subheadline)
+//                    .padding()
+//                    .background(Color.gray.opacity(0.2))
+//                    .cornerRadius(8)
+//            }
+//        }
+//        .padding()
+//    }
+//}
+
 
 struct VocabularyGridView: View {
-    let vocabulary: [String: String] // Assuming you have a vocabulary dictionary
+    let vocabulary: [String: String]
 
-    // Define grid items
     let columns = [
-        GridItem(.adaptive(minimum: 100)) // Adjust the minimum size for the cards
+        GridItem(.flexible()), //.adaptive(minimum: 100)
+        GridItem(.flexible())
     ]
 
     var body: some View {
@@ -211,21 +394,21 @@ struct VocabularyGridView: View {
                 VStack {
                     Text(vocab.key)
                         .font(.headline)
-                        .padding()
+//                        .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.blue.opacity(0.2)) // Card background color
-                        .cornerRadius(10) // Rounded corners
-                        .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2) // Optional shadow
-                    // Optionally display the definition or additional info
+                        .background(Color.blue.opacity(0.2))
+                        .cornerRadius(10)
+//                        .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+
                     Text(vocab.value)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .padding(.bottom)
                 }
-                .padding(.horizontal) // Padding around the card
+                .padding(.horizontal)
             }
         }
-        .padding() // Padding around the grid
+        .padding()
     }
 }
 
@@ -327,6 +510,7 @@ struct QuizScreen: View {
                         .padding()
                         .onAppear(){
                             viewModel.updateHighScore()
+                            viewModel.checkWin()
                         }
                     if viewModel.currentScore >= topic.highScore {
                         Text("Congrats! You got a new high score of \(viewModel.currentScore)!!")
@@ -504,3 +688,16 @@ struct QuizScreen: View {
     //
     //            }
 
+//                Button(action:{
+//                    viewModel.topics[topicIndex].toggleIsFlashcardsCompleted()
+//                    //topic.isFlashcardsCompleted.toggle()
+////                    topic.toggleIsFlashcardsCompleted()
+//                }) {
+//                    Text(topic.isFlashcardsCompleted ? "Mark Flashcards Incomplete" : "Mark Flashcards Complete")
+//                        .foregroundColor(.white)  // Text color
+//                        .padding()
+//                        .frame(maxWidth: .infinity)  // Makes button fill available space horizontally
+//                        .background(topic.isFlashcardsCompleted ? Color.green : Color.red) // Conditional background color
+//                        .cornerRadius(10)          // Rounded corners
+//                }
+//                .padding()
