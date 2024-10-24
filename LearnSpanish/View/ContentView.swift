@@ -91,91 +91,6 @@ struct TopicCell: View {
     }
 }
 
-//
-//struct TopicCell: View {
-//    let topic: Topic
-//    @ObservedObject var viewModel: TopicViewModel
-//
-//    var body: some View {
-//        HStack {
-//            // Completion Status Indicators
-//            VStack {
-//                HStack {
-//                    // Quiz Completion Indicator
-//                    Image(systemName: topic.isQuizCompleted ? "checkmark.circle.fill" : "xmark.circle")
-//                        .resizable()
-//                        .scaledToFit()
-//                        .frame(width: 20, height: 20)
-//                        .foregroundColor(topic.isQuizCompleted ? .green : .red)
-//
-//                    Text("Quiz")
-//                        .font(.caption)
-//                        .foregroundColor(.primary)
-//                }
-//
-//                HStack {
-//                    // Flashcards Completion Indicator
-//                    Image(systemName: topic.isFlashcardsCompleted ? "checkmark.circle.fill" : "xmark.circle")
-//                        .resizable()
-//                        .scaledToFit()
-//                        .frame(width: 20, height: 20)
-//                        .foregroundColor(topic.isFlashcardsCompleted ? .green : .red)
-//
-//                    Text("Flashcards")
-//                        .font(.caption)
-//                        .foregroundColor(.primary)
-//                }
-//
-//                HStack {
-//                    // Lesson Read Completion Indicator
-//                    Image(systemName: topic.isLessonRead ? "checkmark.circle.fill" : "xmark.circle")
-//                        .resizable()
-//                        .scaledToFit()
-//                        .frame(width: 20, height: 20)
-//                        .foregroundColor(topic.isLessonRead ? .green : .red)
-//
-//                    Text("Lesson")
-//                        .font(.caption)
-//                        .foregroundColor(.primary)
-//                }
-//            }
-//            .padding(.trailing, 8) // Add some spacing between the indicators and the topic name
-//
-//            NavigationLink {
-//                if let topicIndex = viewModel.topics.firstIndex(of: topic) {
-//                    TopicLessonView(topicIndex: topicIndex, topic: $viewModel.topics[topicIndex], viewModel: viewModel)
-//                }
-//            } label: {
-//                Text(topic.name)
-//                    .foregroundColor(.blue)
-//            }
-//        }
-//        .padding()
-//        .background(Color.white)
-//        .cornerRadius(10)
-//        .shadow(radius: 2)
-//    }
-//}
-
-
-//struct TopicCell: View {
-//    let topic: Topic
-//    @ObservedObject var viewModel: TopicViewModel
-//
-//    var body: some View {
-//        HStack {
-//            NavigationLink {
-//                if let topicIndex = viewModel.topics.firstIndex(of: topic) {
-//                    TopicLessonView(topicIndex: topicIndex, topic: $viewModel.topics[topicIndex], viewModel: viewModel) // topicIndex: topicIndex
-//                }
-////                TopicLessonView(topic: topic, viewModel: viewModel)
-//            } label: {
-//                Text(topic.name)
-//            }
-//
-//        }
-//    }
-//}
 
 struct TopicLessonView: View {
     // TO DO:
@@ -267,54 +182,6 @@ struct TopicLessonView: View {
             }
             .padding()
             
-            
-            
-//            VStack {
-//                VStack {
-//                        Text("Quiz Completed")
-//                            .font(.headline) // Optional: Customize the font as needed
-//                        Toggle(isOn: $topic.isQuizCompleted) {
-//                            EmptyView() // Use an empty view to hide the default label
-//                        }
-//                    }
-//                    .padding()
-////                Toggle(
-////                    "Quiz Completed",
-////                    isOn:
-////                        $topic.isQuizCompleted
-////                )
-////                .padding()
-//                VStack {
-//                        Text("Flashcards Completed")
-//                            .font(.headline) // Optional: Customize the font as needed
-//                        Toggle(isOn: $viewModel.topics[topicIndex].isFlashcardsCompleted) {
-//                            EmptyView() // Use an empty view to hide the default label
-//                        }
-//                    }
-//                    .padding()
-////                Toggle(
-////                    "Flashcards Completed",
-////                    isOn:
-////                        $viewModel.topics[topicIndex].isFlashcardsCompleted
-////                )
-//                
-////                .padding()
-//                VStack {
-//                        Text("Lesson Completed")
-//                            .font(.headline) // Optional: Customize the font as needed
-//                        Toggle(isOn: $topic.isLessonRead) {
-//                            EmptyView() // Use an empty view to hide the default label
-//                        }
-//                    }
-//                    .padding()
-////                Toggle(
-////                    "Lesson Completed",
-////                    isOn:
-////                        $topic.isLessonRead
-////                )
-////                .padding()
-//            }
-//            .padding()
             HStack {
  
                 NavigationLink {
@@ -327,6 +194,7 @@ struct TopicLessonView: View {
                         .cornerRadius(10)
                 }
                 .padding()
+                // GO TO QUIZ
                 NavigationLink {
                     QuizScreen(topicIndex: topicIndex, topic: topic, viewModel: viewModel)
                 } label: {
@@ -337,6 +205,16 @@ struct TopicLessonView: View {
                 .background(Color.blue)
                 .cornerRadius(10)
                 .padding()
+                .onAppear() {
+                    viewModel.resetQuiz()
+                }
+                Text("Quiz High Score: \(topic.highScore)")
+                    .onAppear() {
+                        // this makes sure that it opens a new quiz instead of
+                        viewModel.resetQuiz()
+                    }
+                        
+                    
 
             }
             .padding()
@@ -351,6 +229,7 @@ struct TopicLessonView: View {
                     Text("Scroll for more information and vocab.")
                         .font(.subheadline)
                         .foregroundColor(.green)
+                        .frame(alignment: .center)
                     Text(topic.lessonText)
                         .padding()
 
@@ -362,29 +241,12 @@ struct TopicLessonView: View {
     }
 }
 
-//struct VocabularyGridView: View {
-//    let vocabulary: [String: String] // Assuming vocabulary is a dictionary
-//
-//    var body: some View {
-//        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2)) { // 2 columns
-//            ForEach(vocabulary.sorted(by: { $0.key < $1.key }), id: \.key) { vocab in
-//                Text(vocab.key)
-//                    .font(.subheadline)
-//                    .padding()
-//                    .background(Color.gray.opacity(0.2))
-//                    .cornerRadius(8)
-//            }
-//        }
-//        .padding()
-//    }
-//}
-
-
 struct VocabularyGridView: View {
     let vocabulary: [String: String]
 
     let columns = [
-        GridItem(.flexible()), //.adaptive(minimum: 100)
+        // 2 columns looked better than having dynamic changing columns (plus the words are visible)
+        GridItem(.flexible()),
         GridItem(.flexible())
     ]
 

@@ -33,7 +33,11 @@ class Topic: ObservableObject, Hashable {
     var currentFlashcardIndex: Int
     let quizQuestions: [QuizQuestion]
     var quizScore: Int
-    var highScore: Int
+    @Published var highScore: Int {
+        didSet {
+            UserDefaults.standard.set(highScore, forKey: Key.highScore(for: name))
+        }
+    }
     @Published var isQuizCompleted: Bool {
         didSet {
             UserDefaults.standard.set(isQuizCompleted, forKey: Key.isQuizCompleted(for: name))
@@ -53,10 +57,13 @@ class Topic: ObservableObject, Hashable {
         static func isLessonRead(for topicName: String) -> String {
             return "IsLessonRead_\(topicName.replacingOccurrences(of: " ", with: "_"))"
         }
+        static func highScore(for topicName: String) -> String {
+            return "highScore_\(topicName.replacingOccurrences(of: " ", with: "_"))"
+        }
     }
 
     // Custom initializer to set default values for isLessonRead, isFlashcardsCompleted, and isQuizCompleted
-    init(name: String, lessonText: String, vocabulary: [String: String], shuffledVocabulary: [String: String], currentFlashcardIndex: Int, quizQuestions: [QuizQuestion], quizScore: Int, highScore: Int, timeLeft: Int, bonusPoints: Int, quizProgress: Int) {
+    init(name: String, lessonText: String, vocabulary: [String: String], shuffledVocabulary: [String: String], currentFlashcardIndex: Int, quizQuestions: [QuizQuestion], quizScore: Int,  timeLeft: Int, bonusPoints: Int, quizProgress: Int) { // highScore: Int,
         self.name = name
         self.lessonText = lessonText
         self.vocabulary = vocabulary
@@ -64,7 +71,6 @@ class Topic: ObservableObject, Hashable {
         self.currentFlashcardIndex = currentFlashcardIndex
         self.quizQuestions = quizQuestions
         self.quizScore = quizScore
-        self.highScore = highScore
         self.timeLeft = timeLeft
         self.bonusPoints = bonusPoints
         self.quizProgress = quizProgress
@@ -73,6 +79,7 @@ class Topic: ObservableObject, Hashable {
         self.isLessonRead = UserDefaults.standard.bool(forKey: Key.isLessonRead(for: name))
         self.isFlashcardsCompleted = UserDefaults.standard.bool(forKey: Key.isFlashcardsCompleted(for: name))
         self.isQuizCompleted = UserDefaults.standard.bool(forKey: Key.isQuizCompleted(for: name))
+        self.highScore = UserDefaults.standard.integer(forKey: Key.highScore(for: name))
     }
     
     // Hashable and Equatable conformance

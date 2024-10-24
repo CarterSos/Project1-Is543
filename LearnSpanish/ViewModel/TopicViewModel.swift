@@ -166,7 +166,7 @@ class TopicViewModel: ObservableObject {
                 QuizQuestion(question: "What is the meaning of 'Hola'?", options: ["Goodbye", "Hello", "Good morning"], correctAnswer: "Hello")
             ],
             quizScore: 0,
-            highScore: 0,
+            //highScore: 0,
 //            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Basic Greetings and Farewells")),
             timeLeft: 20,
             bonusPoints: 10,
@@ -200,7 +200,7 @@ class TopicViewModel: ObservableObject {
                 QuizQuestion(question: "What is 'Where is...?' in Spanish?", options: ["¿Dónde está...?", "¿Cuánto cuesta?", "Me gustaría"], correctAnswer: "¿Dónde está...?")
             ],
             quizScore: 0,
-            highScore: 0,
+//            highScore: 0,
 //            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Common Phrases")),
             timeLeft: 20,
             bonusPoints: 10,
@@ -237,7 +237,7 @@ class TopicViewModel: ObservableObject {
                 QuizQuestion(question: "What is 'Ten' in Spanish?", options: ["Diez", "Nueve", "Ocho"], correctAnswer: "Diez")
             ],
             quizScore: 0,
-            highScore: 0,
+//            highScore: 0,
 //            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Numbers (1-10)")),
             timeLeft: 20,
             bonusPoints: 10,
@@ -272,7 +272,7 @@ class TopicViewModel: ObservableObject {
                 QuizQuestion(question: "What is 'Pink' in Spanish?", options: ["Rosa", "Naranja", "Verde"], correctAnswer: "Rosa")
             ],
             quizScore: 0,
-            highScore: 0,
+//            highScore: 0,
 //            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Colors")),
             timeLeft: 20,
             bonusPoints: 10,
@@ -308,7 +308,7 @@ class TopicViewModel: ObservableObject {
                 QuizQuestion(question: "What is the Spanish word for 'Father'?", options: ["Padre", "Madre", "Hermano"], correctAnswer: "Padre")
             ],
             quizScore: 0,
-            highScore: 0,
+//            highScore: 0,
 //            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Family Members")),
             timeLeft: 20,
             bonusPoints: 10,
@@ -345,7 +345,7 @@ class TopicViewModel: ObservableObject {
                 QuizQuestion(question: "What is the Spanish word for 'Meat'?", options: ["Carne", "Pan", "Verdura"], correctAnswer: "Carne")
             ],
             quizScore: 0,
-            highScore: 0,
+//            highScore: 0,
 //            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Food and Drink")),
             timeLeft: 20,
             bonusPoints: 10,
@@ -382,7 +382,7 @@ class TopicViewModel: ObservableObject {
                 QuizQuestion(question: "What is the Spanish word for 'Interesting'?", options: ["Interesante", "Aburrido", "Bonito"], correctAnswer: "Interesante")
             ],
             quizScore: 0,
-            highScore: 0,
+//            highScore: 0,
 //            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Common Adjectives")),
             timeLeft: 20,
             bonusPoints: 10,
@@ -418,7 +418,7 @@ class TopicViewModel: ObservableObject {
                 QuizQuestion(question: "What is the Spanish word for 'Friday'?", options: ["Viernes", "Martes", "Jueves"], correctAnswer: "Viernes")
             ],
             quizScore: 0,
-            highScore: 0,
+//            highScore: 0,
 //            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Days of the Week")),
             timeLeft: 20,
             bonusPoints: 10,
@@ -453,7 +453,7 @@ class TopicViewModel: ObservableObject {
                 QuizQuestion(question: "What is the Spanish word for 'It's hot'?", options: ["Hace calor", "Llueve", "Nieva"], correctAnswer: "Hace calor")
             ],
             quizScore: 0,
-            highScore: 0,
+//            highScore: 0,
 //            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Weather Vocabulary")),
             timeLeft: 20,
             bonusPoints: 10,
@@ -490,7 +490,7 @@ class TopicViewModel: ObservableObject {
                 QuizQuestion(question: "What is the Spanish word for 'To have'?", options: ["Tener", "Ser", "Hacer"], correctAnswer: "Tener")
             ],
             quizScore: 0,
-            highScore: 0,
+//            highScore: 0,
 //            isQuizCompleted: UserDefaults.standard.bool(forKey: Topic.Key.isQuizCompleted(for: "Common Verbs")),
             timeLeft: 20,
             bonusPoints: 10,
