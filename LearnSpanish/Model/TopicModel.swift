@@ -76,7 +76,7 @@ class Topic: ObservableObject, Hashable {
         self.highScore = UserDefaults.standard.integer(forKey: Key.highScore(for: name))
     }
     
-
+    // from stack overflow --> makes my class conform to hashable and equatable
     static func == (lhs: Topic, rhs: Topic) -> Bool {
         return lhs.name == rhs.name
     }

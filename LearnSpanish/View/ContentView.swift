@@ -21,7 +21,7 @@ struct ContentView: View {
             List(viewModel.topics, id: \.self) { topic in
                 TopicCell(topic: topic, viewModel: viewModel)
             }
-            .listStyle(.plain) // can change style
+            .listStyle(.plain)
             .navigationTitle("Learn Spanish!")
         }
     }
@@ -42,42 +42,42 @@ struct TopicCell: View {
             }
             HStack {
                 HStack {
-                    // Quiz Completion Indicator
-                    Image(systemName: topic.isQuizCompleted ? "checkmark.circle.fill" : "xmark.circle")
+                    // From symbols finder on mac
+                    Image(systemName: topic.isQuizCompleted ? "checkmark.circle.fill" : "xmark.circle")//book.square.stack book
 //                        .resizable()
 //                        .scaledToFit()
                         .frame(width: 20, height: 20)
                         .foregroundColor(topic.isQuizCompleted ? .green : .red)
 
-                    Text("Q")
-                        .font(.caption)
-                        .foregroundColor(.primary)
+//                    Text("Q")
+//                        .font(.caption)
+//                        .foregroundColor(.primary)
                 }
 
                 HStack {
                     // Flashcards Completion Indicator
-                    Image(systemName: topic.isFlashcardsCompleted ? "checkmark.circle.fill" : "xmark.circle")
+                    Image(systemName: topic.isFlashcardsCompleted ? "lightbulb.fill" : "lightbulb") //book.square.stack
 //                        .resizable()
 //                        .scaledToFit()
                         .frame(width: 20, height: 20)
                         .foregroundColor(topic.isFlashcardsCompleted ? .green : .red)
 
-                    Text("F")
-                        .font(.caption)
-                        .foregroundColor(.primary)
+//                    Text("F")
+//                        .font(.caption)
+//                        .foregroundColor(.primary)
                 }
 
                 HStack {
                     // Lesson Read Completion Indicator
-                    Image(systemName: topic.isLessonRead ? "checkmark.circle.fill" : "xmark.circle")
+                    Image(systemName: topic.isLessonRead ? "book.fill" : "book")
 //                        .resizable()
 //                        .scaledToFit()
                         .frame(width: 20, height: 20)
                         .foregroundColor(topic.isLessonRead ? .green : .red)
 
-                    Text("L")
-                        .font(.caption)
-                        .foregroundColor(.primary)
+//                    Text("L")
+//                        .font(.caption)
+//                        .foregroundColor(.primary)
                 }
             }
             .padding(.trailing, 8) // Add some spacing between the indicators and the topic name
@@ -129,7 +129,7 @@ struct TopicLessonView: View {
                 
                 // Flashcards Completion
                 VStack {
-                    Image(systemName: topic.isFlashcardsCompleted ? "checkmark.circle.fill" : "xmark.circle")
+                    Image(systemName: topic.isFlashcardsCompleted ? "lightbulb.fill" : "lightbulb")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 30, height: 30)
@@ -154,7 +154,7 @@ struct TopicLessonView: View {
                 
                 // Lesson Read Completion
                 VStack {
-                    Image(systemName: topic.isLessonRead ? "checkmark.circle.fill" : "xmark.circle")
+                    Image(systemName: topic.isLessonRead ? "book.fill" : "book")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 30, height: 30)
@@ -184,38 +184,51 @@ struct TopicLessonView: View {
                     FlashcardScreen(topic: topic, viewModel: viewModel)
                 } label: {
                     Text("Practice Flashcards")
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(10)
+                        
                 }
-                .padding()
+                .frame(width: 100, height: 50)
+//                .frame(maxWidth: .infinity, alignment: .center)
+                .foregroundColor(.white)
+                .padding(.vertical)
+                .background(.blue)
+                .cornerRadius(10)
+
+                
                 // GO TO QUIZ
                 NavigationLink {
                     QuizScreen(topicIndex: topicIndex, topic: topic, viewModel: viewModel)
                 } label: {
                     Text("Take the Quiz")
                 }
+                .frame(width: 100, height: 50)
+//                .frame(maxWidth: .infinity, alignment: .center)
                 .foregroundColor(.white)
-                .padding()
-                .background(Color.blue)
+                .padding(.vertical)
+                .background(.blue)
                 .cornerRadius(10)
-                .padding()
+//                .padding()
                 .onAppear() {
                     viewModel.resetQuiz()
+                    // this makes it so when I go back into the quiz after getting a high score the quiz starts over
                 }
+                
                 Text("Quiz High Score: \(topic.highScore)")
+                    .frame(width: 100, height: 50)
+//                    .frame(maxWidth: .infinity, alignment: .center)
+                    .foregroundColor(.blue)
+                    .padding(.vertical)
+                    .background(.white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.blue, lineWidth: 2)
+                    )
+                    .cornerRadius(10)
                     .onAppear() {
                         // this makes sure that it opens a new quiz instead of
                         viewModel.resetQuiz()
                     }
-                        
-                    
-
             }
             .padding()
-
-            
 
             Text("Lesson for Topic: \(topic.name)")
                 .font(.headline)
@@ -226,6 +239,7 @@ struct TopicLessonView: View {
                         .font(.subheadline)
                         .foregroundColor(.green)
                         .frame(alignment: .center)
+                        .padding(.horizontal)
                     Text(topic.lessonText)
                         .padding()
 
@@ -252,16 +266,13 @@ struct VocabularyGridView: View {
                 VStack {
                     Text(vocab.key)
                         .font(.headline)
-//                        .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.blue.opacity(0.2))
+                        .background(.blue.opacity(0.2))
                         .cornerRadius(10)
-//                        .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
 
                     Text(vocab.value)
                         .font(.subheadline)
                         .foregroundColor(.gray)
-                        .padding(.bottom)
                 }
                 .padding(.horizontal)
             }
@@ -296,14 +307,12 @@ struct QuizScreen: View {
     var body: some View {
         
         VStack {
-            if viewModel.currentQuizIndex < topic.quizQuestions.count { //viewModel.topics[topicIndex].quizQuestions.count
+            if viewModel.currentQuizIndex < topic.quizQuestions.count {
                 VStack {
-                    
-                    
                     Text("Score: \(viewModel.currentScore)")
                         .font(.headline)
                         .padding()
-                    // Time-based bonus indicator
+                    
                     ProgressView(value: viewModel.quizElapsedTime, total: 20)
                         .padding()
                     
@@ -321,8 +330,6 @@ struct QuizScreen: View {
                             viewModel.stopQuizTimer()
                             selectedAnswer = option
                             if selectedAnswer == topic.quizQuestions[viewModel.currentQuizIndex].correctAnswer { // if correct
-                                //                        Image(systemName: "checkmark")
-                                //                            .foregroundColor(.green)
                                 isCorrectAnswer = true
                                 viewModel.correctAnswer()
                                 showResult = true
@@ -331,8 +338,6 @@ struct QuizScreen: View {
                                 viewModel.incorrectAnswer()
                                 showResult = true
                             }
-                            //                    isCorrectAnswer = viewModel.checkQuizAnswer(option)
-                            //                    showResult = true
                             
                         }) {
                             Text(option)
@@ -345,9 +350,7 @@ struct QuizScreen: View {
                         }
                     }
                     Spacer()
-                    
-                    
-                } // end VStack
+                }
                 .alert(isPresented: $showResult) {
                     Alert(
                         title: Text(isCorrectAnswer ? "Correct!" : "Incorrect"),
@@ -382,13 +385,13 @@ struct QuizScreen: View {
                             Text("😎😎😎")
                                 .font(.largeTitle)
                         }
-                            .rotation3DEffect(Angle(degrees: 1080),axis: (0, 0, 1))
-//                            .modifier(Cardify(isFaceUp: true))
-                            .onAppear {
-                                withAnimation {
-                                    rotation += 360
-                                }
-                            }
+//                            .rotation3DEffect(Angle(degrees: 1080),axis: (0, 0, 1))
+////                            .modifier(Cardify(isFaceUp: true))
+//                            .onTapGesture {
+//                                withAnimation {
+//                                    rotation += 360
+//                                }
+//                            }
                         
                         
                     } else {
@@ -397,7 +400,14 @@ struct QuizScreen: View {
                                 .font(.largeTitle)
                             Text("Get all quiz questions correct to complete the quiz!")
                                 .font(.headline)
-                        }.rotation3DEffect(Angle(degrees: 360),axis: (0, 0, 1))
+                        }
+//                        .rotation3DEffect(Angle(degrees: 360),axis: (0, 0, 1))
+////                        .modifier(Cardify(isFaceUp: true))
+//                        .onTapGesture {
+//                            withAnimation {
+//                                rotation += 360
+//                            }
+//                        }
                     }
 
                     Button("Restart Quiz") {
@@ -415,147 +425,104 @@ struct QuizScreen: View {
 }
     
     
-    struct FlashcardScreen: View {
-        let topic: Topic
-        @ObservedObject var viewModel: TopicViewModel
-        
-        @State private var selectedTab = "" // ID is int and identifier is string
-        @State private var shuffledVocabulary: [(key: String, value: String)] = []
-        // see website and inclass video
-        @State private var rotation: Double = 0
-        
-        var body: some View {
-            TabView(selection: $selectedTab) {
-                ForEach(shuffledVocabulary, id: \.key) { entry in // vocabulary.keys.shuffled()
-                    VStack {
-                        Text(
-                            (viewModel.isShowingTranslation ? entry.key : entry.value)
-                        )
-                        .font(.largeTitle)
-                        .foregroundColor(.black)
-                        .padding()
-                    }
-                    .background(Color(.systemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .shadow(radius: 5)
-                    .padding()
-                    .rotation3DEffect(Angle(degrees: rotation),
-                                      axis: (1, 1, 0) // 0,1,0
+struct FlashcardScreen: View {
+    let topic: Topic
+    @ObservedObject var viewModel: TopicViewModel
+    
+    @State private var selectedTab = "" // ID is int and identifier is string
+    @State private var shuffledVocabulary: [(key: String, value: String)] = []
+    // see website and inclass video
+    @State private var rotation: Double = 0
+    
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            ForEach(shuffledVocabulary, id: \.key) { entry in // vocabulary.keys.shuffled()
+                VStack {
+                    Text(
+                        (viewModel.isShowingTranslation ? entry.key : entry.value)
                     )
-                    //                .modifier(Cardify(isFaceUp: rotation.truncatingRemainder(dividingBy: 90) == 0))
-                    .modifier(Cardify(isFaceUp: rotation >= 0)) // <= 90
-                    //                .modifier(Cardify(isFaceUp: rotation <= 90))
-                    .onTapGesture {
-                        withAnimation {
-                            //
-                            rotation += 360
-                            //                        if rotation == 180 { // prevents my words from facing backwards
-                            //                            rotation = 0
-                            //                        } else {
-                            //                            rotation += 180
-                            //                        }
-                            viewModel.flipFlashcard()
-                            
-                        }
+                    .font(.largeTitle)
+                    .foregroundColor(.black)
+                    .padding()
+                }
+                .background(Color(.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .shadow(radius: 5)
+                .padding()
+                .rotation3DEffect(Angle(degrees: rotation),
+                                  axis: (1, 1, 0) // 0,1,0
+                )
+                //                .modifier(Cardify(isFaceUp: rotation.truncatingRemainder(dividingBy: 90) == 0))
+                .modifier(Cardify(isFaceUp: rotation >= 0)) // <= 90
+                //                .modifier(Cardify(isFaceUp: rotation <= 90))
+                .onTapGesture {
+                    withAnimation {
+                        //
+                        rotation += 360
+                        //                        if rotation == 180 { // prevents my words from facing backwards
+                        //                            rotation = 0
+                        //                        } else {
+                        //                            rotation += 180
+                        //                        }
+                        viewModel.flipFlashcard()
+                        
                     }
+                }
+            }
+            
+        }
+        .onAppear {
+            shuffledVocabulary = topic.vocabulary.shuffled().map { ($0.key, $0.value) }
+            selectedTab = shuffledVocabulary.first?.key ?? ""
+        }
+        .onChange(of: selectedTab) {
+            viewModel.tabChanged() // Call the tabChanged function
+        }
+        .tabViewStyle(.page)
+        .indexViewStyle(.page(backgroundDisplayMode: .always))
+    }
+}
+    
+struct Cardify: Animatable, ViewModifier {
+    var isFaceUp: Bool {
+        rotation < 90
+    }
+    
+    var animatableData: Double {
+        get { rotation }
+        set { rotation = newValue }
+    }
+    
+    var rotation: Double
+    
+    init(isFaceUp: Bool) {
+        rotation = isFaceUp ? 0 : 180 //220 // 180
+    }
+    
+    func body(content: Content) -> some View {
+        GeometryReader { geometry in
+            ZStack {
+                if isFaceUp {
+                    RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).fill(.white)
+                    //RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).stroke()
+                } else {
+                    RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).fill(.white)
                 }
                 
+                content.opacity(isFaceUp ? 1 : 1) // this was used to keep one side blank but I just want to flip it
             }
-            .onAppear {
-                shuffledVocabulary = topic.vocabulary.shuffled().map { ($0.key, $0.value) }
-                selectedTab = shuffledVocabulary.first?.key ?? ""
-            }
-            .onChange(of: selectedTab) {
-                viewModel.tabChanged() // Call the tabChanged function
-            }
-            .tabViewStyle(.page)
-            .indexViewStyle(.page(backgroundDisplayMode: .always))
+            .rotation3DEffect(Angle(degrees: rotation), axis: (0, 1, 0)) // 0,1,0
         }
     }
     
-    struct Cardify: Animatable, ViewModifier {
-        var isFaceUp: Bool {
-            rotation < 90
-        }
-        
-        var animatableData: Double {
-            get { rotation }
-            set { rotation = newValue }
-        }
-        
-        var rotation: Double
-        
-        init(isFaceUp: Bool) {
-            rotation = isFaceUp ? 0 : 180 //220 // 180
-        }
-        
-        func body(content: Content) -> some View {
-            GeometryReader { geometry in
-                ZStack {
-                    if isFaceUp {
-                        RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).fill(.white)
-                        //RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).stroke()
-                    } else {
-                        RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).fill(.white)
-                    }
-                    
-                    content.opacity(isFaceUp ? 1 : 1) // this was used to keep one side blank but I just want to flip it
-                }
-                .rotation3DEffect(Angle(degrees: rotation), axis: (0, 1, 0)) // 0,1,0
-            }
-        }
-        
-        // MARK: - Drawing constants
-        
-        private func cornerRadius(for size: CGSize) -> Double {
-            min(size.width, size.height) * 0.08
-        }
+    // MARK: - Drawing constants
+    
+    private func cornerRadius(for size: CGSize) -> Double {
+        min(size.width, size.height) * 0.08
     }
-    
-    #Preview {
-        ContentView()
-    }
-    
-    
-    //            ForEach(topic.quizQuestions, id: \.self) { question in
-    //                VStack {
-    //                    Text("\(question.question)")
-    //                    if selectedAnswer == question.correctAnswer {
-    //                        Image(systemName: "checkmark")
-    //                            .foregroundColor(.green)
-    //                    }
-    //                }
-    //                .onAppear {
-    //                    viewModel.startQuizTimer()
-    //                }
-    //                ForEach(question.options, id: \.self) { option in
-    //                    Button(action: {
-    //                        viewModel.stopQuizTimer()
-    //                        selectedAnswer = option
-    //
-    //                    }) {
-    //                        HStack {
-    //                            Text(option)
-    //                            Spacer()
-    //
-    //
-    //                        }
-    //                    }
-    //                    Text(option.wrappedValue)
-    //                }
-    //
-    //            }
+}
 
-//                Button(action:{
-//                    viewModel.topics[topicIndex].toggleIsFlashcardsCompleted()
-//                    //topic.isFlashcardsCompleted.toggle()
-////                    topic.toggleIsFlashcardsCompleted()
-//                }) {
-//                    Text(topic.isFlashcardsCompleted ? "Mark Flashcards Incomplete" : "Mark Flashcards Complete")
-//                        .foregroundColor(.white)  // Text color
-//                        .padding()
-//                        .frame(maxWidth: .infinity)  // Makes button fill available space horizontally
-//                        .background(topic.isFlashcardsCompleted ? Color.green : Color.red) // Conditional background color
-//                        .cornerRadius(10)          // Rounded corners
-//                }
-//                .padding()
+#Preview {
+    ContentView()
+}
+    
