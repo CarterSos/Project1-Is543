@@ -4,6 +4,12 @@ I really enjoyed this project! I went through all the required tasks and I belie
 
 I would say I deserve an A (95% ish) on this project because I completed all the important tasks. Read below for specifically what I did, but the only thing I didn't get exactly right is that you cannot see the short lesson text in landscape mode (although the app functionality works).
 
+The other potential thing that may mark me down is that my Model started as a struct but I changed it to a class because I had some rendering problems. I spent 4 hours alone just trying to make it work with a struct but for some reason, I could only get it to work as a class. I know in class we traditionally created our Models as structs, so I commented out what my struct used to look like in the model file below it.
+
+I would say I went above and beyond in making the quiz fun. I included a little easter egg because the screen is different and plays special sound effects when the user achieves a new high score compared to just completing a quiz. The quiz sound effects are from different games and I learned how to do a delay to play multiple sounds in sequence after one trigger.
+
+Thanks for the help getting this app started!
+
 ## Required Tasks
 
 1. I completed the language learning app
